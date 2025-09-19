@@ -2,13 +2,13 @@
 variable "application" {
   description = "Name of the application for which the virtual network is created (agw,corenet etc.)"
   type        = string
-  default = "defaultVnet"
+  default     = "defaultVnet"
 }
 
 variable "environment" {
   description = "Enter the 3-digits environment which will be used by resources (hpr,sbx,prd,hyb)"
   type        = string
-  default = "dev"
+  default     = "dev"
   validation {
     condition = (
       length(var.environment) > 0 && length(var.environment) <= 3
@@ -19,7 +19,7 @@ variable "environment" {
 
 variable "location" {
   description = "Enter the region for which to create the resources."
-  default = "francecentral"
+  default     = "francecentral"
 }
 
 variable "tags" {

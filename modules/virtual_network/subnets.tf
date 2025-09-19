@@ -2,12 +2,12 @@ resource "azurerm_subnet" "these" {
   depends_on = [
     azurerm_virtual_network.vnet
   ]
-  for_each                                      = var.subnets
-  name                                          = contains(local.reserved_subnets, each.value.shortname) ? each.value.shortname : "snet-${var.environment}-${each.value.shortname}"
-  resource_group_name                           = local.resource_group_name
-  virtual_network_name                          = azurerm_virtual_network.this.name
-  address_prefixes                              = tolist([each.value.cidr])
-  service_endpoints                             = each.value.service_endpoints
+  for_each             = var.subnets
+  name                 = contains(local.reserved_subnets, each.value.shortname) ? each.value.shortname : "snet-${var.environment}-${each.value.shortname}"
+  resource_group_name  = local.resource_group_name
+  virtual_network_name = azurerm_virtual_network.this.name
+  address_prefixes     = tolist([each.value.cidr])
+  service_endpoints    = each.value.service_endpoints
   dynamic "delegation" {
     for_each = each.value.delegation
     iterator = delegation

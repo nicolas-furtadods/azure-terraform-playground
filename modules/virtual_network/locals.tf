@@ -1,16 +1,16 @@
 locals {
-  naming               = replace(lower("${var.application}-${var.environment}"), " ", "")
+  naming = replace(lower("${var.application}-${var.environment}"), " ", "")
 
   local_tags = {
     application = var.application
     environment = var.environment
-    location  = var.location
-    managed_by = "Terraform"
+    location    = var.location
+    managed_by  = "Terraform"
   }
 
-  tags = merge(var.tags,local.local_tags)
+  tags = merge(var.tags, local.local_tags)
 
-    reserved_subnets = [
+  reserved_subnets = [
     "GatewaySubnet",
     "AzureBastionSubnet",
     "AzureFirewallSubnet",
