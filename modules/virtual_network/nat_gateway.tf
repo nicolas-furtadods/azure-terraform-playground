@@ -14,7 +14,7 @@ resource "azurerm_nat_gateway" "this" {
   resource_group_name     = local.resource_group_name
   location                = var.location
   tags                    = local.tags
-  sku_name                = "Standard"
+  sku_name     = "Standard"
   idle_timeout_in_minutes = 10
 }
 
