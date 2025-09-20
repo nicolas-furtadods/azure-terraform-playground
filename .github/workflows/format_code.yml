@@ -14,3 +14,4 @@ jobs:
         uses: nicolas-furtadods/all-repos-tooling-private/.github/workflows/format_code.yml@master
         with:
             push-code: true
+        secrets: inherit
