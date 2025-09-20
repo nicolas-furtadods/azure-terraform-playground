@@ -33,7 +33,7 @@ jobs:
             echo "### Discovered Modules"
             echo "<details><summary>Modules</summary>"
             echo \`\`\`
-            ${{ steps.set-modules-list.outputs.modules-list }}
+            echo ${{ steps.set-modules-list.outputs.modules-list }}
             echo \`\`\`
             echo "</details>"
           } >> $GITHUB_STEP_SUMMARY
@@ -61,7 +61,7 @@ jobs:
             echo "### Discovered Products"
             echo "<details>"
             echo \`\`\`
-            ${{ steps.set-products-list.outputs.products-list }}
+            echo ${{ steps.set-products-list.outputs.products-list }}
             echo \`\`\`
             echo "</details>"
           } >> $GITHUB_STEP_SUMMARY
