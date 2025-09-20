@@ -23,7 +23,7 @@ jobs:
         id: set-modules-list
         run: |
           echo "Finding directories in ./modules"
-          dirts=$(find ./modules -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | tr '\n' ' ')
+          dirts=$(find ./modules -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | jq -R . | jq -s . | jq -c .)
           echo "Found directories: $dirts"
           echo "modules-list=$dirts" >> $GITHUB_OUTPUT
           
@@ -32,9 +32,7 @@ jobs:
           {
             echo "### Discovered Modules"
             echo "<details><summary>Modules</summary>"
-            echo \`\`\`
             echo ${{ steps.set-modules-list.outputs.modules-list }}
-            echo \`\`\`
             echo "</details>"
           } >> $GITHUB_STEP_SUMMARY
 
@@ -51,7 +49,7 @@ jobs:
         id: set-products-list
         run: |
           echo "Finding directories in ./products"
-          dirts=$(find ./products -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | tr '\n' ' ')
+          dirts=$(find ./products -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | jq -R . | jq -s . | jq -c .)
           echo "Found directories: $dirts"
           echo "products-list=$dirts" >> $GITHUB_OUTPUT
 
@@ -59,10 +57,8 @@ jobs:
         run: |
           {
             echo "### Discovered Products"
-            echo "<details>"
-            echo \`\`\`
+            echo "<details><summary>Products</summary>"
             echo ${{ steps.set-products-list.outputs.products-list }}
-            echo \`\`\`
             echo "</details>"
           } >> $GITHUB_STEP_SUMMARY
 
