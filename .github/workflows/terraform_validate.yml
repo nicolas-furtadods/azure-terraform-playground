@@ -1,0 +1,60 @@
+name: "Terraform validate"
+run-name: "Terraform validate triggered by a ${{ github.event_name}} event."
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - "*"
+  workflow_dispatch:
+
+jobs:
+  discover-modules:
+    runs-on: [ubuntu-latest]
+    outputs:
+      modules-list: ${{ steps.set-modules-list.outputs.modules-list }}
+    steps:
+      - name: "Checkout Source Code"
+        uses: actions/checkout@v5
+        
+      - name: "Discover Terraform Modules"
+        id: set-modules-list
+        run: |
+          echo "Finding directories in ./modules"
+          dirts=$(find ./modules -type d -maxdepth 1 | sed 's|^\./||' | tail -n +2 | tr '\n' ' ')
+          echo "Found directories: $dirts"
+          echo "::set-output name=modules-list::$dirts"
+
+  discover-products:
+    runs-on: [ubuntu-latest]
+    outputs:
+      products-list: ${{ steps.set-products-list.outputs.products-list }}
+    steps:
+      - name: "Checkout Source Code"
+        uses: actions/checkout@v5
+
+      - name: "Discover Terraform Products"
+        id: set-products-list
+        run: |
+          echo "Finding directories in ./products"
+          dirts=$(find ./products -type d -maxdepth 1 | sed 's|^\./||' | tail -n +2 | tr '\n' ' ')
+          echo "Found directories: $dirts"
+          echo "::set-output name=products-list::$dirts"
+
+  validate-modules:
+    needs: discover-modules
+    name: "Terraform Validate Modules"
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        module: ${{ fromJson(needs.discover-modules.outputs.modules-list) }}
+    uses: nicolas-furtadods/all-repos-tooling-private/.github/workflows/azure_terraform_workflow.yml@master
+    with:
+      environment: azure-environment
+      terraform-version: "1.5.2"
+      terraform-working-directory: "./${{ matrix.module }}"
+    secrets: 
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
