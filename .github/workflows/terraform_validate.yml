@@ -59,7 +59,7 @@ jobs:
         run: |
           {
             echo "### Discovered Products"
-            echo "<details><summary>Products</summary>"
+            echo "<details>"
             echo \`\`\`
             ${{ steps.set-products-list.outputs.products-list }}
             echo \`\`\`
