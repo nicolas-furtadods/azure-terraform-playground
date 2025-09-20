@@ -23,7 +23,7 @@ jobs:
         id: set-modules-list
         run: |
           echo "Finding directories in ./modules"
-          dirts=$(find ./modules -type d -maxdepth 1 | sed 's|^\./||' | tail -n +2 | tr '\n' ' ')
+          dirts=$(find ./modules -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | tr '\n' ' ')
           echo "Found directories: $dirts"
           echo "modules-list=$dirts" >> $GITHUB_OUTPUT
           
@@ -51,7 +51,7 @@ jobs:
         id: set-products-list
         run: |
           echo "Finding directories in ./products"
-          dirts=$(find ./products -type d -maxdepth 1 | sed 's|^\./||' | tail -n +2 | tr '\n' ' ')
+          dirts=$(find ./products -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | tr '\n' ' ')
           echo "Found directories: $dirts"
           echo "products-list=$dirts" >> $GITHUB_OUTPUT
 
