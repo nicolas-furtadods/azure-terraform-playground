@@ -3,6 +3,9 @@ run-name: "Terraform validate triggered by a ${{ github.event_name}} event."
 
 env:
   TF_CLI_ARGS: "-no-color"
+  TF_CLI_ARGS_plan: "-input=false"
+  TF_CLI_ARGS_destroy: "-input=false"
+  TF_CLI_ARGS_apply: "-input=false"
 on:
   push:
     branches:
@@ -77,5 +80,21 @@ jobs:
       environment: azure-environment
       terraform-version: "1.5.2"
       terraform-working-directory: "modules/${{ matrix.module }}/"
+    secrets: 
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+
+  validate-products:
+    needs: discover-products
+    name: "Terraform Validate Products"
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        module: ${{ fromJson(needs.discover-products.outputs.products-list) }}
+    uses: nicolas-furtadods/all-repos-tooling-private/.github/workflows/azure_terraform_workflow.yml@master
+    with:
+      environment: azure-environment
+      terraform-version: "1.5.2"
+      terraform-working-directory: "products/${{ matrix.module }}/"
     secrets: 
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
