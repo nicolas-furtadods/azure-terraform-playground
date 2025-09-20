@@ -74,6 +74,6 @@ jobs:
     with:
       environment: azure-environment
       terraform-version: "1.5.2"
-      terraform-working-directory: "./${{ matrix.module }}"
+      terraform-working-directory: "modules/${{ matrix.module }}/"
     secrets: 
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
