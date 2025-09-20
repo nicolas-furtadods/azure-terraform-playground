@@ -25,7 +25,19 @@ jobs:
           echo "Finding directories in ./modules"
           dirts=$(find ./modules -type d -maxdepth 1 | sed 's|^\./||' | tail -n +2 | tr '\n' ' ')
           echo "Found directories: $dirts"
-          echo "::set-output name=modules-list::$dirts"
+          echo "modules-list=$dirts" >> $GITHUB_OUTPUT
+          
+      - name: Summary
+        run: |
+          {
+            echo "### Discovered Modules"
+            echo "<details><summary>Modules</summary>"
+            echo \`\`\`
+            echo "${{ steps.set-modules-list.outputs.modules-list }}"
+            echo \`\`\`
+            echo "</details>"
+          } >> $GITHUB_STEP_SUMMARY
+
 
   discover-products:
     runs-on: [ubuntu-latest]
@@ -41,7 +53,18 @@ jobs:
           echo "Finding directories in ./products"
           dirts=$(find ./products -type d -maxdepth 1 | sed 's|^\./||' | tail -n +2 | tr '\n' ' ')
           echo "Found directories: $dirts"
-          echo "::set-output name=products-list::$dirts"
+          echo "products-list=$dirts" >> $GITHUB_OUTPUT
+
+      - name: Summary
+        run: |
+          {
+            echo "### Discovered Products"
+            echo "<details><summary>Products</summary>"
+            echo \`\`\`
+            echo "${{ steps.set-products-list.outputs.products-list }}"
+            echo \`\`\`
+            echo "</details>"
+          } >> $GITHUB_STEP_SUMMARY
 
   validate-modules:
     needs: discover-modules
