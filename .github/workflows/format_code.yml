@@ -2,16 +2,18 @@ name: "Format Code"
 run-name: "Code Format triggered by a ${{ github.event_name}} event."
 
 on:
-    push:
-        branches:
-            - '*'
-    pull_request:
-        branches:
-            - "*"
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - "*"
 
+permissions:
+    contents: write
 jobs:
-    format:
-        uses: nicolas-furtadods/all-repos-tooling-private/.github/workflows/format_code.yml@master
-        with:
-            push-code: true
-        secrets: inherit
+  format:
+    uses: nicolas-furtadods/all-repos-tooling-private/.github/workflows/format_code.yml@master
+    with:
+      push-code: true
+    secrets: inherit
