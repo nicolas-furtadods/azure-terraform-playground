@@ -1,0 +1,35 @@
+name: "Terraform Actions for Products"
+run-name: "#${{ github.run_number}} - ${{ inputs.terraform_action }} on ${{ inputs.product}}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      product:
+        description: 'Product to target'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - Private Flex Consumption Function App
+      terraform_action:
+        description: 'Terraform action to perform'
+        required: true
+        type: choice
+        options:
+          - plan
+          - apply
+          - destroy
+
+jobs:
+  terraform_action:
+    name: "Terraform ${{ inputs.terraform_action }} on ${{ inputs.product }}"
+    uses: nicolas-furtadods/all-repos-tooling-private/.github/workflows/azure_terraform_workflow.yml@master
+    with:
+      environment: azure-environment
+      terraform-version: "1.5.2"
+      terraform-working-directory: "products/${{ inputs.product }}/"
+      terraform-plan: true
+      terraform-apply: ${{ inputs.terraform_action == 'apply' && true || false }}
+      terraform-destroy: ${{ inputs.terraform_action == 'destroy' && true || false }}
+    secrets: 
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
