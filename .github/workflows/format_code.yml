@@ -1,5 +1,5 @@
 name: "Format Code"
-run-name: "Code Format triggered by a ${{ github.event_name}} events."
+run-name: "Code Format triggered by a ${{ github.event_name}} event."
 
 on:
     push:
