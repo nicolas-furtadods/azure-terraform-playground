@@ -1,11 +1,6 @@
 name: "Terraform validate"
 run-name: "Terraform validate triggered by a ${{ github.event_name}} event."
 
-env:
-  TF_CLI_ARGS: "-no-color"
-  TF_CLI_ARGS_plan: "-input=false"
-  TF_CLI_ARGS_destroy: "-input=false"
-  TF_CLI_ARGS_apply: "-input=false"
 on:
   push:
     branches:
