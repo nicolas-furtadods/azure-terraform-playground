@@ -11,6 +11,7 @@ on:
 
 permissions:
     contents: write
+    issues: write
 jobs:
   format:
     uses: nicolas-furtadods/all-repos-tooling-private/.github/workflows/format_code.yml@master
