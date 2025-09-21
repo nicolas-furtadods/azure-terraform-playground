@@ -17,5 +17,5 @@ jobs:
   format:
     uses: nicolas-furtadods/all-repos-tooling-private/.github/workflows/format_code.yml@master
     with:
-      push-code: true
+      push-code: ${{ github.event_name == 'push' && true || false }}
     secrets: inherit
