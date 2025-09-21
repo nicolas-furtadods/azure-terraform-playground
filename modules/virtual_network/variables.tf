@@ -20,7 +20,7 @@ variable "environment" {
 variable "location" {
   description = "Enter the region for which to create the resources."
   default     = "francecentral"
-  type = string
+  type        = string
 }
 
 variable "tags" {
