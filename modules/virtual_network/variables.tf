@@ -20,6 +20,7 @@ variable "environment" {
 variable "location" {
   description = "Enter the region for which to create the resources."
   default     = "francecentral"
+  type = string
 }
 
 variable "tags" {
@@ -67,26 +68,4 @@ variable "subnets" {
       }))
     }))
   }))
-}
-
-
-variable "diagnostic_settings" {
-  description = "Object structure for information regarding diagnostics settings"
-  type = object({
-    network_watcher = object({
-      network_watcher_name                = string
-      network_watcher_resource_group_name = string
-    })
-    log_analytics = object({
-      workspace_id          = string
-      workspace_resource_id = string
-      workspace_region      = string
-      interval_in_minutes   = number
-    })
-    storage_account = object({
-      storage_account_id = string
-      retention_days     = number
-    })
-  })
-  default = null
 }
