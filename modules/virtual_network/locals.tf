@@ -19,5 +19,5 @@ locals {
   ]
 
   #Resource Group Name
-  resource_group_name = var.resource_group_name == null ? azurerm_resource_group.name : var.resource_group_name
+  resource_group_name = var.resource_group_name == null ? azurerm_resource_group.this.name : var.resource_group_name
 }
