@@ -1,4 +1,5 @@
 import os
+
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
@@ -7,8 +8,8 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 # Import modules
 from .modules.helpers import helpers
-from .routers.health import health
 from .routers.example import router as examplerouter
+from .routers.health import health
 
 load_dotenv()
 
@@ -29,12 +30,15 @@ app = FastAPI(
 app.include_router(health.router)
 app.include_router(examplerouter.router)
 
+
 @app.exception_handler(StarletteHTTPException)
 async def http_exception_handler(request, exc):
     return JSONResponse(
-        { "error": "HTTPException", "message": exc.detail, "status_code": exc.status_code },
+        {
+            "error": "HTTPException",
+            "message": exc.detail,
+            "status_code": exc.status_code,
+        },
         status_code=exc.status_code,
-        media_type="application/json"
+        media_type="application/json",
     )
-
-

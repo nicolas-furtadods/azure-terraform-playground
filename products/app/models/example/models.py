@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 # Declare a model from the BaseModel class
 class Item(BaseModel):
     id: int
