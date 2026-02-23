@@ -91,3 +91,10 @@ variable "diagnostic_settings" {
   })
   default = null
 }
+
+
+variable "template_folder" {
+  description = "A folder containing Network Security Rules as JSON. To use a file, you must call it by name."
+  type        = string
+  default     = null
+}
