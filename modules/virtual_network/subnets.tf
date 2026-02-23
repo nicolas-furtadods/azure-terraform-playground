@@ -1,6 +1,6 @@
 resource "azurerm_subnet" "these" {
   depends_on = [
-    azurerm_virtual_network.vnet
+    azurerm_virtual_network.this
   ]
   for_each             = var.subnets
   name                 = contains(local.reserved_subnets, each.value.shortname) ? each.value.shortname : "snet-${var.environment}-${each.value.shortname}"

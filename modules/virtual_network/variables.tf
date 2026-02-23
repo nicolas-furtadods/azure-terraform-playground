@@ -31,6 +31,7 @@ variable "tags" {
 variable "resource_group_name" {
   description = "(Optionnal)Name of the resource group where resources will be created"
   type        = string
+  default = null
 }
 
 variable "vnet_cidr_block" {

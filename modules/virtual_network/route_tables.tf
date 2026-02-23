@@ -1,4 +1,5 @@
 resource "azurerm_route_table" "these" {
+  for_each           = var.subnets
   name                = "snet-${local.naming}-${each.value.shortname}-rtb"
   location            = var.location
   resource_group_name = local.resource_group_name
