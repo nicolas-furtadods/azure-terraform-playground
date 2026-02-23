@@ -1,0 +1,68 @@
+.git
+.gitattributes
+.gitignore
+.github
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+env/
+pip-wheel-metadata/
+.python-version
+
+# Node
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+pnpm-debug.log
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+tfplan
+crash.log
+crash.*.log
+
+# Build artifacts
+dist/
+build/
+out/
+coverage/
+.cache/
+*.log
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+
+# Tests
+.tox/
+.nox/
+htmlcov/
+test-results/
+
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+*.crt
+*.cer
