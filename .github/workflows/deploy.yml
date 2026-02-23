@@ -1,0 +1,70 @@
+name: Build and Push Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      app_version:
+        description: App version tag (e.g. 1.2.3)
+        required: true
+        type: string
+      build:
+        description: Build the image
+        required: true
+        type: boolean
+        default: false
+      deploy:
+        description: Push image to ACR
+        required: true
+        type: choice
+        options:
+          - none
+          - dev
+          - prod
+        default: none
+
+permissions:
+  contents: read
+
+env:
+  ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
+  IMAGE_NAME: fastapi
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Set image tags
+        id: tags
+        run: |
+          if [ "${{ inputs.deploy }}" = "dev" ]; then
+          echo "tag=${{ inputs.app_version }}-dev" >> "$GITHUB_OUTPUT"
+          elif [ "${{ inputs.deploy }}" = "prod" ]; then
+          echo "tag=${{ inputs.app_version }}" >> "$GITHUB_OUTPUT"
+          else
+          echo "tag=${{ inputs.app_version }}" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Build image
+        if: ${{ inputs.build }}
+        run: |
+          docker build \
+          -t "$ACR_LOGIN_SERVER/$IMAGE_NAME:${{ steps.tags.outputs.tag }}" \
+          -f products/Dockerfile \
+          products
+
+      - name: Login to ACR
+        if: ${{ inputs.deploy != 'none' }}
+        run: |
+          echo "${{ secrets.ACR_PASSWORD }}" | docker login "$ACR_LOGIN_SERVER" \
+          --username "${{ secrets.ACR_USERNAME }}" \
+          --password-stdin
+
+      - name: Push image
+        if: ${{ inputs.deploy != 'none' && inputs.build }}
+        run: |
+          docker push "$ACR_LOGIN_SERVER/$IMAGE_NAME:${{ steps.tags.outputs.tag }}"
