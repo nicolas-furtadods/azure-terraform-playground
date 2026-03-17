@@ -6,8 +6,8 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.middleware.cors import CORSMiddleware
-from .modules.auth.azure_auth import get_swagger_ui_init_oauth
 
+from .modules.auth.azure_auth import get_swagger_ui_init_oauth
 # Import modules
 from .modules.helpers import helpers
 from .routers.example import router as examplerouter
@@ -29,11 +29,13 @@ app = FastAPI(
     swagger_ui_init_oauth=get_swagger_ui_init_oauth(),
 )
 
-app.add_middleware(CORSMiddleware, 
-      allow_origins=["*"], 
-      allow_credentials=True,
-      allow_methods=["*"], 
-      allow_headers=["*"])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Include sub-folder APIs
 app.include_router(health.router)

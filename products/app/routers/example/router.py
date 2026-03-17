@@ -1,14 +1,18 @@
 from fastapi import APIRouter, FastAPI, HTTPException, Security, status
 
 from ...models.example import models
-from ...modules.auth.azure_auth import DEFAULT_REQUIRED_SCOPES, require_azure_token
+from ...modules.auth.azure_auth import (DEFAULT_REQUIRED_SCOPES,
+                                        require_azure_token)
 from ...modules.helpers import helpers
 
 router = APIRouter(
     prefix="/example",
     tags=["example"],
     responses={404: {"description": "Not found"}},
-    dependencies=[Security(require_azure_token, scopes=DEFAULT_REQUIRED_SCOPES)],
+    dependencies=[
+        Security(
+            require_azure_token,
+            scopes=DEFAULT_REQUIRED_SCOPES)],
 )
 
 

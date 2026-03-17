@@ -32,8 +32,10 @@ class AzureAuthSettings:
 
 def get_auth_settings() -> AzureAuthSettings:
     tenant_id = os.getenv("AZURE_TENANT_ID", "common")
-    audience = os.getenv("AZURE_API_CLIENT_ID") or os.getenv("AZURE_CLIENT_ID", "")
-    print(f"Using AzureAuthSettings with tenant_id={tenant_id}, audience={audience}")
+    audience = os.getenv("AZURE_API_CLIENT_ID") or os.getenv(
+        "AZURE_CLIENT_ID", "")
+    print(
+        f"Using AzureAuthSettings with tenant_id={tenant_id}, audience={audience}")
     token_url = os.getenv(
         "AZURE_TOKEN_URL",
         f"https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token",
@@ -50,7 +52,8 @@ def get_auth_settings() -> AzureAuthSettings:
         openid_config_url=openid_config_url,
         required_scopes=_parse_csv(os.getenv("AZURE_REQUIRED_SCOPES")),
         required_app_roles=_parse_csv(os.getenv("AZURE_REQUIRED_APP_ROLES")),
-        allowed_client_app_ids=_parse_csv(os.getenv("AZURE_ALLOWED_CLIENT_APP_IDS")),
+        allowed_client_app_ids=_parse_csv(
+            os.getenv("AZURE_ALLOWED_CLIENT_APP_IDS")),
         swagger_client_id=os.getenv("AZURE_SWAGGER_CLIENT_ID"),
         swagger_client_secret=os.getenv("AZURE_SWAGGER_CLIENT_SECRET"),
     )
@@ -76,7 +79,9 @@ class OAuth2ClientCredentialsBearer(OAuth2):
             scopes = {}
 
         flows = OAuthFlows(
-            clientCredentials=OAuthFlowClientCredentials(tokenUrl=token_url, scopes=scopes)
+            clientCredentials=OAuthFlowClientCredentials(
+                tokenUrl=token_url, scopes=scopes
+            )
         )
         super().__init__(flows=flows, scheme_name=scheme_name, auto_error=auto_error)
 
@@ -138,7 +143,9 @@ def _get_jwks_client() -> jwt.PyJWKClient:
 
 
 def _has_required_scopes(claims: dict, required_scopes: list[str]) -> bool:
-    print(f"Validating required scopes. Required: {required_scopes}, Token claims: {claims}")
+    print(
+        f"Validating required scopes. Required: {required_scopes}, Token claims: {claims}"
+    )
     if not required_scopes:
         return True
 
@@ -148,7 +155,9 @@ def _has_required_scopes(claims: dict, required_scopes: list[str]) -> bool:
 
 
 def _has_required_roles(claims: dict, required_roles: list[str]) -> bool:
-    print(f"Validating required app roles. Required: {required_roles}, Token claims: {claims}")
+    print(
+        f"Validating required app roles. Required: {required_roles}, Token claims: {claims}"
+    )
     if not required_roles:
         return True
 
@@ -177,24 +186,29 @@ def _build_www_authenticate_value(required_scopes: list[str]) -> str:
 
 def _decode_token(token: str) -> dict:
     if not SETTINGS.audience:
-        raise ValueError("AZURE_API_CLIENT_ID or AZURE_CLIENT_ID must be configured.")
+        raise ValueError(
+            "AZURE_API_CLIENT_ID or AZURE_CLIENT_ID must be configured.")
 
     metadata = _get_openid_metadata()
     jwks_client = _get_jwks_client()
 
-    ## Security issue I should address: The get_signing_key_from_jwt method fetches the JWKS keys and finds the matching key based on the "kid" in the token header. However, if an attacker can manipulate the token header to specify a "kid" that points to a malicious key, they could potentially forge tokens. To mitigate this, I should implement additional checks to ensure that the "kid" corresponds to a trusted key and consider caching the JWKS keys to prevent frequent fetching.
-    ##  TO DO
+    # Security issue I should address: The get_signing_key_from_jwt method fetches the JWKS keys and finds the matching key based on the "kid" in the token header. However, if an attacker can manipulate the token header to specify a "kid" that points to a malicious key, they could potentially forge tokens. To mitigate this, I should implement additional checks to ensure that the "kid" corresponds to a trusted key and consider caching the JWKS keys to prevent frequent fetching.
+    # TO DO
     signing_key = jwks_client.get_signing_key_from_jwt(token)
     print(f"Decoding token with signing key kid={signing_key.key_id}")
-    print(f"Metadata issuer={metadata['issuer']}, jwks_uri={metadata['jwks_uri']}")
+    print(
+        f"Metadata issuer={metadata['issuer']}, jwks_uri={metadata['jwks_uri']}")
     claims = jwt.decode(
         token,
         signing_key.key,
         algorithms=["RS256"],
         audience=SETTINGS.audience,
         # (Update 2025): The property is now named requestedAccessTokenVersion in the new "Microsoft Graph App Manifest". https://learn.microsoft.com/en-us/entra/identity-platform/azure-active-directory-graph-app-manifest-deprecation#attribute-differences-between-azure-ad-graph-and-microsoft-graph-formats. The default value is still null and needs to be changed to 2.
-        #issuer=metadata["issuer"],
-        options={"verify_signature": True, "verify_aud": True, "verify_iss": True},
+        # issuer=metadata["issuer"],
+        options={
+            "verify_signature": True,
+            "verify_aud": True,
+            "verify_iss": True},
     )
     return claims
 
@@ -213,15 +227,22 @@ async def require_azure_token(
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Access token has expired. Please obtain a new token against Microsoft Identity Platform.",
-                headers={"WWW-Authenticate": _build_www_authenticate_value(required_scopes)},
+                headers={
+                    "WWW-Authenticate": _build_www_authenticate_value(required_scopes)
+                },
             ) from ex
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid access token",
-            headers={"WWW-Authenticate": _build_www_authenticate_value(required_scopes)},
+            headers={
+                "WWW-Authenticate": _build_www_authenticate_value(required_scopes)
+            },
         ) from ex
 
-    # Not used at the moment but we can use it to filter the client application that can access the API. For example, we can allow only a specific client application to access the API by checking the "azp" or "appid" claim in the token
+    # Not used at the moment but we can use it to filter the client
+    # application that can access the API. For example, we can allow only a
+    # specific client application to access the API by checking the "azp" or
+    # "appid" claim in the token
     if not _validate_allowed_client_app(claims):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -229,7 +250,7 @@ async def require_azure_token(
         )
 
     # Scoppe is not in the claims
-    #if not _has_required_scopes(claims, required_scopes):
+    # if not _has_required_scopes(claims, required_scopes):
     #    raise HTTPException(
     #        status_code=status.HTTP_403_FORBIDDEN,
     #        detail="Missing required scope",
