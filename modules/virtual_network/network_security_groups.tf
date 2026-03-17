@@ -7,7 +7,7 @@ resource "azurerm_network_security_group" "these" {
 }
 
 resource "azurerm_subnet_network_security_group_association" "subnets_to_nsg" {
-  depends_on = [ module.templates ]
+  depends_on                = [module.templates]
   for_each                  = var.subnets
   subnet_id                 = azurerm_subnet.these[each.key].id
   network_security_group_id = azurerm_network_security_group.these[each.key].id
