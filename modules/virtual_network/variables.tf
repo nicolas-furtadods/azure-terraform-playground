@@ -60,6 +60,7 @@ variable "subnets" {
     private_endpoint_network_policies_enabled     = bool
     service_endpoints                             = list(string)
     template                                      = string
+    enforce_route_table_association                = bool
     delegation = list(object({
       name = string
       service_delegation = list(object({
